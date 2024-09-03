@@ -20,12 +20,14 @@ namespace Practica4_Formulario_Clase
 
         private void btn_guardar(object sender, EventArgs e) //boton guardar
         {
+
             string nombre = tb_nombre.Text;
             string apellido = tb_apellidos.Text;
             string telefono = tb_telefono.Text; //Se guarda los datos del formulario en variables tipo string
             string estatura = tb_estatura.Text;
             string edad = tb_edad.Text;
 
+//esobrad
             string genero = ""; //metodo para elegir genero 
             if (rb_hombre.Checked) {
                 genero = "hombre";

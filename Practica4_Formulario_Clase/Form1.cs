@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Practica4_Formulario_Clase
 {
@@ -16,6 +18,12 @@ namespace Practica4_Formulario_Clase
         public ventana()// creamos la ventana
         {
             InitializeComponent();
+            // Inicializamos los controladores de eventos para validaciones dinámicas
+            tb_nombre.TextChanged += validar_nombre;
+            tb_apellidos.TextChanged += validar_apellidos;
+            tb_edad.TextChanged += validar_edad;
+            tb_estatura.TextChanged += validar_estatura;
+            tb_telefono.Leave += validar_telefono;
         }
 
         private void btn_guardar(object sender, EventArgs e) //boton guardar
@@ -27,7 +35,6 @@ namespace Practica4_Formulario_Clase
             string estatura = tb_estatura.Text;
             string edad = tb_edad.Text;
 
-//esobrad
             string genero = ""; //metodo para elegir genero 
             if (rb_hombre.Checked) {
                 genero = "hombre";
@@ -53,6 +60,90 @@ namespace Practica4_Formulario_Clase
             //mensaje de accion terminada
             MessageBox.Show("Datos gusrdados con exito: \r\n" + datos + "\r\nInformacion");
         }
+
+        ////////metodos booleanos para validar los enteros o decimales///
+
+        private bool EsTextoValido(string valor) {
+
+            return Regex.IsMatch(valor, @"^[a-zA-Z\s]+$");
+        }
+        private bool EsEnteroValido(string valor) {
+
+            int resultado;
+            return int.TryParse(valor, out resultado);
+        }
+
+        private bool EsEnteroValidoDe10Digitos(string valor) {
+            long resultado;
+            return long.TryParse(valor, out resultado) && valor.Length == 10;
+        }
+
+        private bool EsDecimalValido(string valor) {
+        decimal resultado;
+        return decimal. TryParse(valor, out resultado);
+        }
+        //Metodos para validar/////////////////////////////////////////////////////////////////
+
+       //validar nombre
+        private void validar_nombre(object sender, EventArgs e)
+        {
+
+            System.Windows.Forms.TextBox textbox = (System.Windows.Forms.TextBox)sender;
+            if (!EsTextoValido(textbox.Text))
+            {
+
+                MessageBox.Show("por favor, ingrese un Nombre valido", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textbox.Clear();
+            }
+        }
+        
+        //validar apellidos
+        private void validar_apellidos(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TextBox textbox = (System.Windows.Forms.TextBox)sender;
+            if (!EsTextoValido(textbox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese Apellidos válidos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textbox.Clear();
+            }
+        }
+
+        // Método para validar la edad
+        private void validar_edad(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TextBox textbox = (System.Windows.Forms.TextBox)sender;
+            if (!EsEnteroValido(textbox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese una Edad válida", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textbox.Clear();
+            }
+        }
+
+        // Método para validar la estatura
+        private void validar_estatura(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TextBox textbox = (System.Windows.Forms.TextBox)sender;
+            if (!EsDecimalValido(textbox.Text))
+            {
+                MessageBox.Show("Por favor, ingrese una Estatura válida (número positivo)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textbox.Clear();
+            }
+        }
+
+        // Método para validar el teléfono
+        private void validar_telefono(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TextBox textbox = (System.Windows.Forms.TextBox)sender;
+            if (textbox.Text.Length == 10 && EsEnteroValidoDe10Digitos(textbox.Text))
+            {
+            }
+            else
+            {
+                MessageBox.Show("Por favor, ingrese una numero de telefono valido de 10 digitos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textbox.Clear();
+            }
+        }
+       
         //Boton de limpiar
         private void btn_cancelar(object sender, EventArgs e)
         {

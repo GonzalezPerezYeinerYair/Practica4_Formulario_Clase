@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
+
 namespace Practica4_Formulario_Clase
 {
     public partial class ventana : Form

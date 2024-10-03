@@ -10,12 +10,14 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using MySql.Data.MySqlClient;//importamos la libresioas para realizar la coneccion con la BD
 
 
 namespace Practica4_Formulario_Clase
 {
     public partial class ventana : Form
     {
+        string SqlConection = "server=loccalhost; port=3306; Database=Formulario_Registro; UID=root; Pwd=5002y;";
         public ventana()// creamos la ventana
         {
             InitializeComponent();
@@ -27,11 +29,37 @@ namespace Practica4_Formulario_Clase
             tb_telefono.Leave += validar_telefono;
         }
 
+        //Metodo para Enviar a infromacion al MySql
+        private void InsertarRegistro(string nombre, string apellidos, int edad, decimal estatura, string telefono, string genero)//anates de enviar el archivo hay que parsear el 
+        {
+            //Aqui se importa el string que definimos el la linea 20 el SqlConection
+            using (MySqlConnection conection = new MySqlConnection(SqlConection))
+            {
+                conection.Open();
+
+                string insertQuery = "INSERT INTO registros (Nombre, Apellidos, Edad, Estatura, Telefono, Genero) " +
+                 "VALUES (@Nombre, @Apellidos, @Edad, @Estatura, @Telefono, @Genero)";
+
+                using (MySqlCommand command = new MySqlCommand(insertQuery, conection))
+                {
+                    //Paramatros que se añaden 
+                    command.Parameters.AddWithValue("@Nombre", nombre);
+                    command.Parameters.AddWithValue("@Apellidos", apellidos);
+                    command.Parameters.AddWithValue("@Edad", edad);
+                    command.Parameters.AddWithValue("@Estatura", estatura);
+                    command.Parameters.AddWithValue("@Telefono", telefono);
+                    command.Parameters.AddWithValue("@Genero", genero);
+
+                    command.ExecuteNonQuery();
+                }
+                conection.Close();
+            }
+        }
         private void btn_guardar(object sender, EventArgs e) //boton guardar
         {
 
             string nombre = tb_nombre.Text;
-            string apellido = tb_apellidos.Text;
+            string apellidos = tb_apellidos.Text;
             string telefono = tb_telefono.Text; //Se guarda los datos del formulario en variables tipo string
             string estatura = tb_estatura.Text;
             string edad = tb_edad.Text;
@@ -44,7 +72,7 @@ namespace Practica4_Formulario_Clase
                 genero = "mujer";
             }
             //Se guardan las variables del formulario en un solo ente llamlo "datos"
-            string datos = $"nombre: {nombre} \r\n apellidos: {apellido} \r\n " +
+            string datos = $"nombre: {nombre} \r\n apellidos: {apellidos} \r\n " +
                 $"telefono: {telefono} \r\n Estatura: {estatura} \r\n Edad:{edad} \r\n Genero:{genero}";
             //se guarda la futura ruta de archivo en una variable
             string ruta_archivo = "C:/Users/User/Desktop/Programacion_avanzada_textos.txt";
@@ -54,8 +82,10 @@ namespace Practica4_Formulario_Clase
             using (StreamWriter writer = new StreamWriter(ruta_archivo, true)) {
                 if (archivos_existe) {
                     writer.WriteLine();
+
                 }
                 writer.WriteLine(datos);
+                InsertarRegistro(nombre, apellidos, Int32.Parse(edad), decimal.Parse(estatura), telefono, genero);
             }
 
             //mensaje de accion terminada
